@@ -14,6 +14,7 @@ class PaginationServiceProvider extends ServiceProvider
     public function boot()
     {
         // $this->loadViewsFrom(__DIR__ . '/resources/views', 'pagination');
+
         // framework 5.0 and above
         if (method_exists($this->app, 'basePath') && $this->app->bound('view')) {
             $namespace = 'pagination';
