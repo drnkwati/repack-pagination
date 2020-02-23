@@ -1,25 +1,23 @@
 <?php
 
-namespace Illuminate\Pagination;
-
-use Illuminate\Contracts\LengthAwarePaginator as PaginatorContract;
+namespace Repack\Pagination;
 
 class UrlWindow
 {
     /**
      * The paginator implementation.
      *
-     * @var \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @var LengthAwarePaginatorContract
      */
     protected $paginator;
 
     /**
      * Create a new URL window instance.
      *
-     * @param  \Illuminate\Contracts\Pagination\LengthAwarePaginator  $paginator
+     * @param  LengthAwarePaginatorContract  $paginator
      * @return void
      */
-    public function __construct(PaginatorContract $paginator)
+    public function __construct(LengthAwarePaginator $paginator)
     {
         $this->paginator = $paginator;
     }
@@ -27,13 +25,15 @@ class UrlWindow
     /**
      * Create a new URL window instance.
      *
-     * @param  \Illuminate\Contracts\Pagination\LengthAwarePaginator  $paginator
+     * @param  LengthAwarePaginatorContract  $paginator
      * @param  int  $onEachSide
      * @return array
      */
-    public static function make(PaginatorContract $paginator, $onEachSide = 3)
+    public static function make(LengthAwarePaginator $paginator, $onEachSide = 3)
     {
-        return (new static($paginator))->get($onEachSide);
+        $instance = new static($paginator);
+
+        return $instance->get($onEachSide);
     }
 
     /**
@@ -59,9 +59,9 @@ class UrlWindow
     protected function getSmallSlider()
     {
         return array(
-            'first'  => $this->paginator->getUrlRange(1, $this->lastPage()),
+            'first' => $this->paginator->getUrlRange(1, $this->lastPage()),
             'slider' => null,
-            'last'   => null,
+            'last' => null,
         );
     }
 
@@ -75,7 +75,7 @@ class UrlWindow
     {
         $window = $onEachSide * 2;
 
-        if (! $this->hasPages()) {
+        if (!$this->hasPages()) {
             return array('first' => null, 'slider' => null, 'last' => null);
         }
 
@@ -143,9 +143,9 @@ class UrlWindow
     protected function getFullSlider($onEachSide)
     {
         return array(
-            'first'  => $this->getStart(),
+            'first' => $this->getStart(),
             'slider' => $this->getAdjacentUrlRange($onEachSide),
-            'last'   => $this->getFinish(),
+            'last' => $this->getFinish(),
         );
     }
 

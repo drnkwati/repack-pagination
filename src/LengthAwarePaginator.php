@@ -1,15 +1,8 @@
 <?php
 
-namespace Illuminate\Pagination;
+namespace Repack\Pagination;
 
-use ArrayAccess;
-use Countable;
-use Illuminate\Compatible\HtmlString;
-use Illuminate\Contracts\LengthAwarePaginator as LengthAwarePaginatorContract;
-use Illuminate\Support\Collection;
-use IteratorAggregate;
-
-class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Countable, IteratorAggregate, LengthAwarePaginatorContract
+class LengthAwarePaginator extends AbstractPaginator implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * The total number of items before slicing.
@@ -28,11 +21,11 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
     /**
      * Create a new paginator instance.
      *
-     * @param  mixed    $items
-     * @param  int      $total
-     * @param  int      $perPage
-     * @param  int|null $currentPage
-     * @param  array    $options       (path, query, fragment, pageName)
+     * @param  mixed  $items
+     * @param  int  $total
+     * @param  int  $perPage
+     * @param  int|null  $currentPage
+     * @param  array  $options (path, query, fragment, pageName)
      * @return void
      */
     public function __construct($items, $total, $perPage, $currentPage = null, array $options = array())
@@ -46,14 +39,19 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
         $this->lastPage = max((int) ceil($total / $perPage), 1);
         $this->path = $this->path !== '/' ? rtrim($this->path, '/') : $this->path;
         $this->currentPage = $this->setCurrentPage($currentPage, $this->pageName);
-        $this->items = $items instanceof Collection ? $items : Collection::make($items);
+        $this->setCollection($items);
+
+        // lets be nice
+        // $this
+        // ->appends(array('show' => $perPage))
+        // ->setPath($this->resolveCurrentPath());
     }
 
     /**
      * Get the current page for the request.
      *
-     * @param  int    $currentPage
-     * @param  string $pageName
+     * @param  int  $currentPage
+     * @param  string  $pageName
      * @return int
      */
     protected function setCurrentPage($currentPage, $pageName)
@@ -66,9 +64,9 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
     /**
      * Render the paginator using the given view.
      *
-     * @param  string|null                      $view
-     * @param  array                            $data
-     * @return \Illuminate\Support\HtmlString
+     * @param  string|null  $view
+     * @param  array  $data
+     * @return HtmlString
      */
     public function links($view = null, $data = array())
     {
@@ -78,15 +76,15 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
     /**
      * Render the paginator using the given view.
      *
-     * @param  string|null                      $view
-     * @param  array                            $data
-     * @return \Illuminate\Support\HtmlString
+     * @param  string|null  $view
+     * @param  array  $data
+     * @return HtmlString
      */
     public function render($view = null, $data = array())
     {
         return new HtmlString(static::viewFactory()->make($view ?: static::$defaultView, array_merge($data, array(
             'paginator' => $this,
-            'elements'  => $this->elements(),
+            'elements' => $this->elements(),
         )))->render());
     }
 
@@ -158,18 +156,19 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
     public function toArray()
     {
         return array(
-            'current_page'   => $this->currentPage(),
-            'data'           => $this->items->toArray(),
+            'current_page' => $this->currentPage(),
+            // 'data' => $this->items,
+            'data' => $this->items->toArray(),
             'first_page_url' => $this->url(1),
-            'from'           => $this->firstItem(),
-            'last_page'      => $this->lastPage(),
-            'last_page_url'  => $this->url($this->lastPage()),
-            'next_page_url'  => $this->nextPageUrl(),
-            'path'           => $this->path,
-            'per_page'       => $this->perPage(),
-            'prev_page_url'  => $this->previousPageUrl(),
-            'to'             => $this->lastItem(),
-            'total'          => $this->total(),
+            'from' => $this->firstItem(),
+            'last_page' => $this->lastPage(),
+            'last_page_url' => $this->url($this->lastPage()),
+            'next_page_url' => $this->nextPageUrl(),
+            'path' => $this->path,
+            'per_page' => $this->perPage(),
+            'prev_page_url' => $this->previousPageUrl(),
+            'to' => $this->lastItem(),
+            'total' => $this->total(),
         );
     }
 
@@ -186,7 +185,7 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayAccess, Cou
     /**
      * Convert the object to its JSON representation.
      *
-     * @param  int      $options
+     * @param  int  $options
      * @return string
      */
     public function toJson($options = 0)

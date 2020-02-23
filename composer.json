@@ -1,41 +1,38 @@
 {
     "name": "drnkwati/repack-pagination",
-    "description": "Illuminate Pagination Package Version 5.6 For PHP 5.3. Namespace (Illuminate\\Pagination) has been maintained for maximum compatibility with other illuminate packages.",
+    "description": "PHP 5.3 Pagination package.",
     "license": "MIT",
-    "homepage": "https://laravel.com",
     "authors": [
+    {
+        "name": "Taylor Otwell",
+        "email": "taylor@laravel.com"
+    },
+    {
+        "name": "Divine Nkwati",
+        "email": "drnkwati@gmail.com"
+    }],
+    "require":
+    {
+        "php": ">=5.3",
+        "ext-json": "*"
+    },
+    "autoload":
+    {
+        "psr-4":
         {
-            "name": "Taylor Otwell",
-            "email": "taylor@laravel.com"
-        },
+            "Repack\\Pagination\\": "src"
+        }
+    },
+    "extra":
+    {
+        "branch-alias":
         {
-            "name": "Nkwati Divine",
-            "email": "drnkwati@gmail.com",
-            "homepage": "http://dnkwati.org"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.29"
-    },
-    "autoload": {
-        "psr-4": {
-            "Illuminate\\": "src/Illuminate/"
+            "dev-master": "5.8-dev"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "5.6-dev"
-        }
-    },
-    "suggest": {
-        "Illuminate/Support": "You must install Illuminate\\Support >=4.1. We avoid requiring in composer.json to provide developer flexibility.",
-        "drnkwati/repack": "You may install drnkwati\\repack as alternative to Illuminate\\Support."
-    },
-    "config": {
-        "preferred-install": "dist",
-        "optimize-autoloader": true,
+    "config":
+    {
         "sort-packages": true
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "minimum-stability": "dev"
 }

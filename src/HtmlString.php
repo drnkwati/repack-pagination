@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Compatible;
+namespace Repack\Pagination;
 
 class HtmlString
 {

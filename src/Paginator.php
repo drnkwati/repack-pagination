@@ -1,15 +1,8 @@
 <?php
 
-namespace Illuminate\Pagination;
+namespace Repack\Pagination;
 
-use ArrayAccess;
-use Countable;
-use Illuminate\Compatible\HtmlString;
-use Illuminate\Contracts\Paginator as PaginatorContract;
-use Illuminate\Support\Collection;
-use IteratorAggregate;
-
-class Paginator extends AbstractPaginator implements ArrayAccess, Countable, IteratorAggregate, PaginatorContract
+class Paginator extends AbstractPaginator implements \ArrayAccess, \Countable, \IteratorAggregate
 {
     /**
      * Determine if there are more items in the data source.
@@ -21,10 +14,10 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     /**
      * Create a new paginator instance.
      *
-     * @param  mixed    $items
-     * @param  int      $perPage
-     * @param  int|null $currentPage
-     * @param  array    $options       (path, query, fragment, pageName)
+     * @param  mixed  $items
+     * @param  int  $perPage
+     * @param  int|null  $currentPage
+     * @param  array  $options (path, query, fragment, pageName)
      * @return void
      */
     public function __construct($items, $perPage, $currentPage = null, array $options = array())
@@ -36,14 +29,18 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
         $this->perPage = $perPage;
         $this->currentPage = $this->setCurrentPage($currentPage);
         $this->path = $this->path !== '/' ? rtrim($this->path, '/') : $this->path;
-
         $this->setItems($items);
+
+        // lets be nice
+        // $this
+        // ->appends(array('show' => $perPage))
+        // ->setPath($this->resolveCurrentPath());
     }
 
     /**
      * Get the current page for the request.
      *
-     * @param  int   $currentPage
+     * @param  int  $currentPage
      * @return int
      */
     protected function setCurrentPage($currentPage)
@@ -61,11 +58,14 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
      */
     protected function setItems($items)
     {
-        $this->items = $items instanceof Collection ? $items : Collection::make($items);
+        $this->setCollection($items);
 
-        $this->hasMore = $this->items->count() > $this->perPage;
+        $this->hasMore = count($this->items) > $this->perPage;
 
         $this->items = $this->items->slice(0, $this->perPage);
+
+        // $this->items = $this->slice(0, $this->perPage);
+        // $this->items = static::arrSlice($this->items, 0, $this->perPage);
     }
 
     /**
@@ -83,8 +83,8 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     /**
      * Render the paginator using the given view.
      *
-     * @param  string|null $view
-     * @param  array       $data
+     * @param  string|null  $view
+     * @param  array  $data
      * @return string
      */
     public function links($view = null, $data = array())
@@ -95,8 +95,8 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     /**
      * Render the paginator using the given view.
      *
-     * @param  string|null $view
-     * @param  array       $data
+     * @param  string|null  $view
+     * @param  array  $data
      * @return string
      */
     public function render($view = null, $data = array())
@@ -111,7 +111,7 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     /**
      * Manually indicate that the paginator does have more pages.
      *
-     * @param  bool    $hasMore
+     * @param  bool  $hasMore
      * @return $this
      */
     public function hasMorePagesWhen($hasMore = true)
@@ -139,15 +139,16 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     public function toArray()
     {
         return array(
-            'current_page'   => $this->currentPage(),
-            'data'           => $this->items->toArray(),
+            'current_page' => $this->currentPage(),
+            // 'data' => $this->items,
+            'data' => $this->items->toArray(),
             'first_page_url' => $this->url(1),
-            'from'           => $this->firstItem(),
-            'next_page_url'  => $this->nextPageUrl(),
-            'path'           => $this->path,
-            'per_page'       => $this->perPage(),
-            'prev_page_url'  => $this->previousPageUrl(),
-            'to'             => $this->lastItem(),
+            'from' => $this->firstItem(),
+            'next_page_url' => $this->nextPageUrl(),
+            'path' => $this->path,
+            'per_page' => $this->perPage(),
+            'prev_page_url' => $this->previousPageUrl(),
+            'to' => $this->lastItem(),
         );
     }
 
@@ -164,7 +165,7 @@ class Paginator extends AbstractPaginator implements ArrayAccess, Countable, Ite
     /**
      * Convert the object to its JSON representation.
      *
-     * @param  int      $options
+     * @param  int  $options
      * @return string
      */
     public function toJson($options = 0)

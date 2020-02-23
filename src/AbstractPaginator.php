@@ -1,20 +1,18 @@
 <?php
 
-namespace Illuminate\Pagination;
+namespace Repack\Pagination;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
- * @mixin \Illuminate\Support\Collection
+ * @mixin Collection
  */
 abstract class AbstractPaginator
 {
     /**
      * All of the items being paginated.
      *
-     * @var \Illuminate\Support\Collection
+     * @var Collection
      */
     protected $items;
 
@@ -86,19 +84,19 @@ abstract class AbstractPaginator
      *
      * @var string
      */
-    public static $defaultView = 'pagination::bootstrap-4';
+    public static $defaultView = 'pagination::default';
 
     /**
      * The default "simple" pagination view.
      *
      * @var string
      */
-    public static $defaultSimpleView = 'pagination::simple-bootstrap-4';
+    public static $defaultSimpleView = 'pagination::simple-default';
 
     /**
      * Determine if the given value is a valid page number.
      *
-     * @param  int    $page
+     * @param  int  $page
      * @return bool
      */
     protected function isValidPageNumber($page)
@@ -121,15 +119,15 @@ abstract class AbstractPaginator
     /**
      * Create a range of pagination URLs.
      *
-     * @param  int     $start
-     * @param  int     $end
+     * @param  int  $start
+     * @param  int  $end
      * @return array
      */
     public function getUrlRange($start, $end)
     {
         $urls = array();
 
-        for ($page = $start; $page <= $end; $page++) {
+        foreach (range($start, $end) as $page) {
             $urls[$page] = $this->url($page);
         }
 
@@ -139,7 +137,7 @@ abstract class AbstractPaginator
     /**
      * Get the URL for a given page number.
      *
-     * @param  int      $page
+     * @param  int  $page
      * @return string
      */
     public function url($page)
@@ -158,7 +156,7 @@ abstract class AbstractPaginator
         }
 
         return $this->path
-        . (Str::contains($this->path, '?') ? '&' : '?')
+        . (static::strContains($this->path, '?') ? '&' : '?')
         . http_build_query($parameters, '', '&')
         . $this->buildFragment();
     }
@@ -166,7 +164,7 @@ abstract class AbstractPaginator
     /**
      * Get / set the URL fragment to be appended to URLs.
      *
-     * @param  string|null         $fragment
+     * @param  string|null  $fragment
      * @return $this|string|null
      */
     public function fragment($fragment = null)
@@ -183,7 +181,7 @@ abstract class AbstractPaginator
     /**
      * Add a set of query string values to the paginator.
      *
-     * @param  array|string $key
+     * @param  array|string  $key
      * @param  string|null  $value
      * @return $this
      */
@@ -199,7 +197,7 @@ abstract class AbstractPaginator
     /**
      * Add an array of query string values.
      *
-     * @param  array   $keys
+     * @param  array  $keys
      * @return $this
      */
     protected function appendArray(array $keys)
@@ -244,7 +242,7 @@ abstract class AbstractPaginator
      */
     public function items()
     {
-        return $this->items->all();
+        return $this->items->toArray();
     }
 
     /**
@@ -357,7 +355,7 @@ abstract class AbstractPaginator
     /**
      * Resolve the current request path or return the default value.
      *
-     * @param  string   $default
+     * @param  string  $default
      * @return string
      */
     public static function resolveCurrentPath($default = '/')
@@ -372,7 +370,7 @@ abstract class AbstractPaginator
     /**
      * Set the current request path resolver callback.
      *
-     * @param  \Closure $resolver
+     * @param  \Closure  $resolver
      * @return void
      */
     public static function currentPathResolver(Closure $resolver)
@@ -383,8 +381,8 @@ abstract class AbstractPaginator
     /**
      * Resolve the current page or return the default value.
      *
-     * @param  string $pageName
-     * @param  int    $default
+     * @param  string  $pageName
+     * @param  int  $default
      * @return int
      */
     public static function resolveCurrentPage($pageName = 'page', $default = 1)
@@ -399,7 +397,7 @@ abstract class AbstractPaginator
     /**
      * Set the current page resolver callback.
      *
-     * @param  \Closure $resolver
+     * @param  \Closure  $resolver
      * @return void
      */
     public static function currentPageResolver(Closure $resolver)
@@ -410,7 +408,7 @@ abstract class AbstractPaginator
     /**
      * Get an instance of the view factory from the resolver.
      *
-     * @return \Illuminate\Contracts\View\Factory
+     * @return Factory
      */
     public static function viewFactory()
     {
@@ -420,7 +418,7 @@ abstract class AbstractPaginator
     /**
      * Set the view factory resolver callback.
      *
-     * @param  \Closure $resolver
+     * @param  \Closure  $resolver
      * @return void
      */
     public static function viewFactoryResolver(Closure $resolver)
@@ -431,7 +429,7 @@ abstract class AbstractPaginator
     /**
      * Set the default pagination view.
      *
-     * @param  string $view
+     * @param  string  $view
      * @return void
      */
     public static function defaultView($view)
@@ -442,23 +440,12 @@ abstract class AbstractPaginator
     /**
      * Set the default "simple" pagination view.
      *
-     * @param  string $view
+     * @param  string  $view
      * @return void
      */
     public static function defaultSimpleView($view)
     {
         static::$defaultSimpleView = $view;
-    }
-
-    /**
-     * Indicate that Bootstrap 3 styling should be used for generated links.
-     *
-     * @return void
-     */
-    public static function useBootstrapThree()
-    {
-        static::defaultView('pagination::default');
-        static::defaultSimpleView('pagination::simple-default');
     }
 
     /**
@@ -469,6 +456,7 @@ abstract class AbstractPaginator
     public function getIterator()
     {
         return $this->items->getIterator();
+        // return new \ArrayIterator($this->items);
     }
 
     /**
@@ -479,6 +467,7 @@ abstract class AbstractPaginator
     public function isEmpty()
     {
         return $this->items->isEmpty();
+        // return is_array($this->items) ? empty($this->items) : $this->items->isEmpty();
     }
 
     /**
@@ -488,7 +477,7 @@ abstract class AbstractPaginator
      */
     public function isNotEmpty()
     {
-        return $this->items->isNotEmpty();
+        return !$this->isEmpty();
     }
 
     /**
@@ -498,13 +487,13 @@ abstract class AbstractPaginator
      */
     public function count()
     {
-        return $this->items->count();
+        return count($this->items);
     }
 
     /**
      * Get the paginator's underlying collection.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getCollection()
     {
@@ -514,12 +503,20 @@ abstract class AbstractPaginator
     /**
      * Set the paginator's underlying collection.
      *
-     * @param  \Illuminate\Support\Collection $collection
+     * @param  mixed  $collection
      * @return $this
      */
-    public function setCollection(Collection $collection)
+    public function setCollection($collection)
     {
-        $this->items = $collection;
+        $this->items = $collection instanceof Collection ? $collection : Collection::make($collection);
+
+        // if (is_object($collection) && method_exists($collection, 'toArray')) {
+        //     $collection = $collection->toArray();
+        // }
+
+        // if (is_array($collection) || $collection instanceof \ArrayAccess) {
+        //     $this->items = $collection;
+        // }
 
         return $this;
     }
@@ -532,18 +529,24 @@ abstract class AbstractPaginator
      */
     public function offsetExists($key)
     {
-        return $this->items->has($key);
+        return $this->items->offsetExists($key);
+
+        // return array_key_exists($key, $this->items);
     }
 
     /**
      * Get the item at the given offset.
      *
-     * @param  mixed   $key
+     * @param  mixed  $key
      * @return mixed
      */
     public function offsetGet($key)
     {
-        return $this->items->get($key);
+        return $this->items->offsetGet($key);
+
+        // if ($this->offsetExists($key)) {
+        //     return $this->items[$key];
+        // }
     }
 
     /**
@@ -555,7 +558,13 @@ abstract class AbstractPaginator
      */
     public function offsetSet($key, $value)
     {
-        $this->items->put($key, $value);
+        return $this->items->offsetSet($key);
+
+        // if (is_null($key)) {
+        //     $this->items[] = $value;
+        // } else {
+        //     $this->items[$key] = $value;
+        // }
     }
 
     /**
@@ -566,7 +575,9 @@ abstract class AbstractPaginator
      */
     public function offsetUnset($key)
     {
-        $this->items->forget($key);
+        return $this->items->offsetUnset($key);
+
+        // unset($this->items[$key]);
     }
 
     /**
@@ -583,15 +594,12 @@ abstract class AbstractPaginator
      * Make dynamic calls into the collection.
      *
      * @param  string  $method
-     * @param  array   $parameters
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
     {
-        $parameters = func_get_args();
-        array_shift($parameters);
         return call_user_func_array(array($this->getCollection(), $method), $parameters);
-        // return $this->getCollection()->$method(...$parameters);
     }
 
     /**
@@ -602,5 +610,40 @@ abstract class AbstractPaginator
     public function __toString()
     {
         return (string) $this->render();
+    }
+
+    // helpers
+
+    /**
+     * Determines if an array is associative.
+     *
+     * An array is "associative" if it doesn't have sequential numerical keys beginning with zero.
+     *
+     * @param  array  $array
+     * @return bool
+     */
+    public static function isAssociative(array $array)
+    {
+        $keys = array_keys($array);
+
+        return array_keys($keys) !== $keys;
+    }
+
+    /**
+     * Determine if a given string contains a given substring.
+     *
+     * @param  string  $haystack
+     * @param  string|array  $needles
+     * @return bool
+     */
+    public static function strContains($haystack, $needles)
+    {
+        foreach ((array) $needles as $needle) {
+            if ($needle != '' && strpos($haystack, $needle) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
