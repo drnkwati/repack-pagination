@@ -1,5 +1,4 @@
 <?php
-
 namespace Repack\Pagination;
 
 class Collection implements \ArrayAccess, \Countable, \IteratorAggregate
@@ -68,7 +67,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->items);
+        return new \ArrayIterator($this->items);
     }
 
     /**

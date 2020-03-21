@@ -1,5 +1,4 @@
 <?php
-
 namespace Repack\Pagination;
 
 use Closure;
